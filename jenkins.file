@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven-3.9'
+        jdk 'Java-17'
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/akhilf8/railway-reservation-devops.git'
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
+                bat 'mvn clean install'
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '🎉 Build Success!'
+        }
+        failure {
+            echo '❌ Build Failed!'
+        }
+    }
+}
